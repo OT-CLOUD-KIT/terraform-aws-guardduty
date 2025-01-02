@@ -7,30 +7,6 @@ variable "enable_guardduty" {
   default     = true
 }
 
-variable "enable_s3_protection" {
-  description = "Configure and enable S3 protection. Defaults to `true`."
-  type        = bool
-  default     = true
-}
-
-variable "enable_kubernetes_protection" {
-  description = "Configure and enable Kubernetes audit logs as a data source for Kubernetes protection. Defaults to `true`."
-  type        = bool
-  default     = true
-}
-
-variable "enable_malware_protection" {
-  description = "Configure and enable Malware Protection as data source for EC2 instances with findings for the detector. Defaults to `true`."
-  type        = bool
-  default     = true
-}
-
-variable "enable_snapshot_retention" {
-  description = "Enable EBS Snaptshot retention for 30 days, if any Findings exists. Defaults to `false`."
-  type        = bool
-  default     = false
-}
-
 variable "finding_publishing_frequency" {
   description = "Specifies the frequency of notifications sent for subsequent finding occurrences. If the detector is a GuardDuty member account, the value is determined by the GuardDuty primary account and cannot be modified. For standalone and GuardDuty primary accounts, it must be configured in Terraform to enable drift detection. Valid values for standalone and primary accounts: `FIFTEEN_MINUTES`, `ONE_HOUR`, `SIX_HOURS`. Defaults to `SIX_HOURS`."
   type        = string
@@ -41,6 +17,28 @@ variable "tags" {
   description = "Key-value map of resource tags. Defaults to `{}`."
   type        = map(any)
   default     = {}
+}
+
+##################################################
+# GuardDuty Detector Feature
+##################################################
+
+variable "guardduty_detector_feature_variables" {
+  description = <<EOF
+  Specifies AWS GuardDuty Detector feature configuration.
+  `name` - The name of the detector feature. Valid values: `S3_DATA_EVENTS`, `EKS_AUDIT_LOGS`, `EBS_MALWARE_PROTECTION`, `RDS_LOGIN_EVENTS`, `EKS_RUNTIME_MONITORING`, `LAMBDA_NETWORK_LOGS`, `RUNTIME_MONITORING`.
+  `status` - The status of the detector feature. Valid values: `ENABLED`, `DISABLED`.
+  `additional_configuration` - Optional configuration block for additional features (EKS_RUNTIME_MONITORING or RUNTIME_MONITORING).
+  EOF
+  type = list(object({
+    name   = string
+    status = string
+    additional_configuration = optional(list(object({
+      name   = string
+      status = string
+    })))
+  }))
+  default = null
 }
 
 ##################################################

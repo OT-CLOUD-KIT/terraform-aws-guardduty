@@ -2,34 +2,37 @@
 # GuardDuty Detector
 ##################################################
 resource "aws_guardduty_detector" "guardduty_detector" {
-  enable = var.enable_guardduty
-
-  datasources {
-    s3_logs {
-      enable = var.enable_s3_protection
-    }
-    kubernetes {
-      audit_logs {
-        enable = var.enable_kubernetes_protection
-      }
-    }
-    malware_protection {
-      scan_ec2_instance_with_findings {
-        ebs_volumes {
-          enable = var.enable_malware_protection
-        }
-      }
-    }
-  }
-
+  enable                       = var.enable_guardduty
   finding_publishing_frequency = var.finding_publishing_frequency
-
   tags = merge(
     {
       "Provisioner" = "Terraform"
     },
     var.tags
   )
+}
+
+##################################################
+# GuardDuty Detector Feature
+##################################################
+resource "aws_guardduty_detector_feature" "guardduty_detector_feature" {
+  #  for_each = var.enable_guardduty && var.guardduty_detector_feature_variables != null ? { for feature in var.guardduty_detector_feature_variables : feature.name => feature } : {}
+
+  for_each = {
+    for idx, feature in var.guardduty_detector_feature_variables : idx => feature
+    if !(feature.name == "EKS_RUNTIME_MONITORING" && contains([for f in var.guardduty_detector_feature_variables : f.name], "RUNTIME_MONITORING")) &&
+    !(feature.name == "RUNTIME_MONITORING" && contains([for f in var.guardduty_detector_feature_variables : f.name], "EKS_RUNTIME_MONITORING"))
+  }
+  detector_id = aws_guardduty_detector.guardduty_detector.id
+  name        = each.value.name
+  status      = each.value.status
+  dynamic "additional_configuration" {
+    for_each = each.value.additional_configuration != null ? each.value.additional_configuration : []
+    content {
+      name   = additional_configuration.value.name
+      status = additional_configuration.value.status
+    }
+  }
 }
 
 ##################################################

@@ -2,12 +2,10 @@ module "guardduty" {
   source = "../"
 
   enable_guardduty             = var.enable_guardduty
-  enable_s3_protection         = var.enable_s3_protection
-  enable_kubernetes_protection = var.enable_kubernetes_protection
-  enable_malware_protection    = var.enable_malware_protection
-  enable_snapshot_retention    = var.enable_snapshot_retention
   finding_publishing_frequency = var.finding_publishing_frequency
   tags                         = var.tags
+
+  guardduty_detector_feature_variables = var.guardduty_detector_feature_variables
 
   enable_guardduty_filter    = var.enable_guardduty_filter
   guardduty_filter_variables = var.guardduty_filter_variables
