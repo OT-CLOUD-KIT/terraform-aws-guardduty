@@ -17,11 +17,11 @@ guardduty_detector_feature_variables = [
   },
   {
     name   = "S3_DATA_EVENTS"
-    status = "ENABLED"
+    status = "DISABLED"
   },
   {
     name   = "EKS_AUDIT_LOGS"
-    status = "DISABLED"
+    status = "ENABLED"
   },
   {
     name   = "EBS_MALWARE_PROTECTION"
