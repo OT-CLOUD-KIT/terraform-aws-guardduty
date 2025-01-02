@@ -32,10 +32,6 @@ guardduty_detector_feature_variables = [
     status = "DISABLED"
   },
   {
-    name   = "EKS_RUNTIME_MONITORING"
-    status = "DISABLED"
-  },
-  {
     name   = "LAMBDA_NETWORK_LOGS"
     status = "DISABLED"
   }
