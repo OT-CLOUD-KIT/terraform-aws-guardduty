@@ -1,9 +1,19 @@
+module "standard_tags" {
+  source  = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-standard-tagging.git?ref=dev"
+  bu      = "TF"
+  program = "OT"
+  app     = "GD"
+  team    = "test@mail.com"
+  region  = "ap-south-1"
+  env     = "q"
+}
+
 module "guardduty" {
   source = "../"
 
   enable_guardduty             = var.enable_guardduty
   finding_publishing_frequency = var.finding_publishing_frequency
-  tags                         = var.tags
+  tags                         = module.standard_tags.standard_tags
 
   guardduty_detector_feature_variables = var.guardduty_detector_feature_variables
 
@@ -16,5 +26,10 @@ module "guardduty" {
 
   enable_guardduty_threatintelset    = var.enable_guardduty_threatintelset
   guardduty_threatintelset_variables = var.guardduty_threatintelset_variables
+  depends_on                         = [module.aws_s3_bucket]
+}
 
+module "aws_s3_bucket" {
+  source = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-s3.git?ref=dev"
+  name   = var.name
 }

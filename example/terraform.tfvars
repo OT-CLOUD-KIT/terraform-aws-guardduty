@@ -1,8 +1,11 @@
 enable_guardduty             = true
 finding_publishing_frequency = "FIFTEEN_MINUTES"
-tags = {
-  environment = "testing"
-}
+bu                           = "TF"
+program                      = "OT"
+app                          = "GD"
+team                         = "test@mail.com"
+region                       = "ap-south-1"
+env                          = "q"
 
 guardduty_detector_feature_variables = [
   {
@@ -65,7 +68,7 @@ guardduty_filter_variables = [{
   ]
 }]
 
-enable_guardduty_ipset = false
+enable_guardduty_ipset = true
 guardduty_s3_bucket    = "testbucketot"
 guardduty_ipset_variables = [{
   activate = false
@@ -75,7 +78,7 @@ guardduty_ipset_variables = [{
   key      = "DefaultGuardDutyIPSet"
 }]
 
-enable_guardduty_threatintelset = false
+enable_guardduty_threatintelset = true
 guardduty_threatintelset_variables = [{
   activate   = false
   name       = "DefaultGuardThreatIntelSet"
@@ -84,3 +87,5 @@ guardduty_threatintelset_variables = [{
   key        = "DefaultGuardThreatIntelSet"
   object_acl = "public-read"
 }]
+
+name = "testbucketot"

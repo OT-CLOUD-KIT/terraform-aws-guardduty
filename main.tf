@@ -1,23 +1,30 @@
+module "naming" {
+  source                  = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-naming.git?ref=dev"
+  random_alphanumeric_len = 4
+  bu                      = "gd"
+  app                     = "gd"
+  env                     = "q"
+  resource                = "gd"
+  tenant                  = ""
+  special                 = false
+  upper                   = false
+  number                  = true
+  gen_no_of_names         = 1
+}
+
 ##################################################
 # GuardDuty Detector
 ##################################################
 resource "aws_guardduty_detector" "guardduty_detector" {
   enable                       = var.enable_guardduty
   finding_publishing_frequency = var.finding_publishing_frequency
-  tags = merge(
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags
-  )
+  tags                         = var.tags
 }
 
 ##################################################
 # GuardDuty Detector Feature
 ##################################################
 resource "aws_guardduty_detector_feature" "guardduty_detector_feature" {
-  #  for_each = var.enable_guardduty && var.guardduty_detector_feature_variables != null ? { for feature in var.guardduty_detector_feature_variables : feature.name => feature } : {}
-
   for_each = {
     for idx, feature in var.guardduty_detector_feature_variables : idx => feature
     if !(feature.name == "EKS_RUNTIME_MONITORING" && contains([for f in var.guardduty_detector_feature_variables : f.name], "RUNTIME_MONITORING")) &&
@@ -43,7 +50,7 @@ resource "aws_guardduty_filter" "guardduty_filter" {
 
   detector_id = aws_guardduty_detector.guardduty_detector.id
 
-  name        = each.value.name
+  name        = "${module.naming.naming_tag[0]}_${each.value.name}"
   action      = each.value.action
   rank        = each.value.rank
   description = each.value.description
@@ -63,12 +70,7 @@ resource "aws_guardduty_filter" "guardduty_filter" {
     }
   }
 
-  tags = merge(
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags
-  )
+  tags = var.tags
 }
 
 ##################################################
@@ -80,16 +82,11 @@ resource "aws_guardduty_ipset" "guardduty_ipset" {
   detector_id = aws_guardduty_detector.guardduty_detector.id
 
   activate = each.value.activate
-  name     = each.value.name
+  name     = "${module.naming.naming_tag[0]}_${each.value.name}"
   format   = each.value.format
   location = "https://s3.amazonaws.com/${aws_s3_object.ipset_object[each.key].bucket}/${each.value.key}"
 
-  tags = merge(
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags
-  )
+  tags = var.tags
 }
 
 resource "aws_s3_object" "ipset_object" {
@@ -100,12 +97,7 @@ resource "aws_s3_object" "ipset_object" {
   content = each.value.content
   key     = each.value.key
 
-  tags = merge(
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags
-  )
+  tags = var.tags
 }
 
 ##################################################
@@ -117,16 +109,11 @@ resource "aws_guardduty_threatintelset" "guardduty_threatintelset" {
   detector_id = aws_guardduty_detector.guardduty_detector.id
 
   activate = each.value.activate
-  name     = each.value.name
+  name     = "${module.naming.naming_tag[0]}_${each.value.name}"
   format   = each.value.format
   location = "https://s3.amazonaws.com/${aws_s3_object.threatintelset_object[each.key].bucket}/${each.value.key}"
 
-  tags = merge(
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags
-  )
+  tags = var.tags
 }
 
 resource "aws_s3_object" "threatintelset_object" {
@@ -137,10 +124,5 @@ resource "aws_s3_object" "threatintelset_object" {
   content = each.value.content
   key     = each.value.key
 
-  tags = merge(
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags
-  )
+  tags = var.tags
 }

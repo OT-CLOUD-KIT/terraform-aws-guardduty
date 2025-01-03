@@ -11,12 +11,15 @@ variable "finding_publishing_frequency" {
   description = "Specifies the frequency of notifications sent for subsequent finding occurrences. If the detector is a GuardDuty member account, the value is determined by the GuardDuty primary account and cannot be modified. For standalone and GuardDuty primary accounts, it must be configured in Terraform to enable drift detection. Valid values for standalone and primary accounts: `FIFTEEN_MINUTES`, `ONE_HOUR`, `SIX_HOURS`. Defaults to `SIX_HOURS`."
   type        = string
   default     = "FIFTEEN_MINUTES"
+  validation {
+    condition     = contains(["FIFTEEN_MINUTES", "ONE_HOUR", "SIX_HOURS"], var.finding_publishing_frequency)
+    error_message = "Valid values for finding_publishing_frequency are 'FIFTEEN_MINUTES', 'ONE_HOUR', or 'SIX_HOURS'."
+  }
 }
 
 variable "tags" {
   description = "Key-value map of resource tags. Defaults to `{}`."
-  type        = map(any)
-  default     = {}
+  type        = map(string)
 }
 
 ##################################################
@@ -39,7 +42,20 @@ variable "guardduty_detector_feature_variables" {
     })))
   }))
   default = null
+
+  validation {
+    condition = alltrue([
+      for feature in var.guardduty_detector_feature_variables :
+      contains(
+        ["S3_DATA_EVENTS", "EKS_AUDIT_LOGS", "EBS_MALWARE_PROTECTION", "RDS_LOGIN_EVENTS", "EKS_RUNTIME_MONITORING", "LAMBDA_NETWORK_LOGS", "RUNTIME_MONITORING"],
+        feature.name
+      ) &&
+      contains(["ENABLED", "DISABLED"], feature.status)
+    ])
+    error_message = "Each feature must have a valid 'name' from ['S3_DATA_EVENTS', 'EKS_AUDIT_LOGS', 'EBS_MALWARE_PROTECTION', 'RDS_LOGIN_EVENTS', 'EKS_RUNTIME_MONITORING', 'LAMBDA_NETWORK_LOGS', 'RUNTIME_MONITORING'] and a valid 'status' of either 'ENABLED' or 'DISABLED'."
+  }
 }
+
 
 ##################################################
 # GuardDuty Filter
@@ -54,7 +70,7 @@ variable "enable_guardduty_filter" {
 variable "guardduty_filter_variables" {
   description = <<EOF
   Specifies AWS GuardDuty Filter configuration.
-  `name` - The name of the filter
+  `name` - The name of the filter.
   `rank` - Specifies the position of the filter in the list of current filters. Also specifies the order in which this filter is applied to the findings.
   `action` - Specifies the action that is to be applied to the findings that match the filter. Can be one of ARCHIVE or NOOP.
   `criterion` - Configuration block for `finding_criteria`. Composed by `field` and one or more of the following operators: `equals` | `not_equals` | `greater_than` | `greater_than_or_equal` | `less_than` | `less_than_or_equal`.
@@ -75,6 +91,14 @@ variable "guardduty_filter_variables" {
     }))
   }))
   default = null
+
+  validation {
+    condition = alltrue([
+      for filter in var.guardduty_filter_variables :
+      contains(["ARCHIVE", "NOOP"], filter.action)
+    ])
+    error_message = "Each filter must have a valid 'action' from ['ARCHIVE', 'NOOP']."
+  }
 }
 
 ##################################################

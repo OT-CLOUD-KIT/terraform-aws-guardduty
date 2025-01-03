@@ -13,12 +13,6 @@ variable "finding_publishing_frequency" {
   default     = "FIFTEEN_MINUTES"
 }
 
-variable "tags" {
-  description = "Key-value map of resource tags. Defaults to `{}`."
-  type        = map(any)
-  default     = {}
-}
-
 ##################################################
 # GuardDuty Detector Feature
 ##################################################
@@ -143,3 +137,53 @@ variable "guardduty_threatintelset_variables" {
   default = null
 }
 
+variable "name" {
+  description = "(Optional, Forces new resource) The name of the bucket. If omitted, Terraform will assign a random, unique name."
+  type        = string
+  default     = ""
+}
+
+variable "bu" {
+  description = "Name of the the business unit, For ex: bu which are supported by TP are: BP, GURUKUMAN etc."
+  type        = string
+
+  validation {
+    condition     = length(var.bu) <= 6
+    error_message = "The business unit name must be less than or equal to 5 characters."
+  }
+}
+
+variable "program" {
+  description = "Name of the Program, For ex: OT, BP etc.  "
+  type        = string
+}
+
+variable "app" {
+  description = "Name of the application, For ex: network, shared, ot etc."
+  type        = string
+
+  validation {
+    condition     = length(var.app) <= 6
+    error_message = "The app name must be less than or equal to 6 characters."
+  }
+}
+
+variable "team" {
+  description = "The email address of the team who owns the application, ex:digitalops@gehealthcare.com"
+  type        = string
+}
+
+variable "region" {
+  description = "Name of the AWS region, For ex: us-east-1, us-east-2"
+  type        = string
+}
+
+variable "env" {
+  description = "Name of the environment example: for development env it should be 'd', prod env should be 'p', testing env should be 'q' and staging env should be's'."
+  type        = string
+
+  validation {
+    condition     = contains(["d", "p", "q", "s"], var.env)
+    error_message = "env must be one of 'd', 'p', 'q', 's'"
+  }
+}
