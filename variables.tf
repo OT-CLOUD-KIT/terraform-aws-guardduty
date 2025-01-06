@@ -1,3 +1,31 @@
+### naming conventions variables
+variable "env" {
+  description = "name of the environment"
+  type        = string
+}
+
+variable "bu" {
+  description = "name of the business unit"
+  type        = string
+}
+
+variable "app" {
+  description = "Name of the application, For ex: network, shared, ot etc."
+  type        = string
+}
+
+variable "tenant" {
+  description = "Name of the tenant"
+  type        = string
+  default     = ""
+}
+
+variable "resource" {
+  description = "Name of the resource"
+  type        = string
+  default     = ""
+}
+
 ##################################################
 # GuardDuty Detector
 ##################################################

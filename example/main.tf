@@ -1,15 +1,19 @@
 module "standard_tags" {
   source  = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-standard-tagging.git?ref=dev"
-  bu      = "TF"
+  bu      = var.bu
   program = "OT"
-  app     = "GD"
-  team    = "test@mail.com"
+  app     = var.app
+  team    = "infra"
   region  = "ap-south-1"
-  env     = "q"
+  env     = var.env
 }
 
 module "guardduty" {
   source = "../"
+
+  env = var.env
+  app = var.app
+  bu  = var.bu
 
   enable_guardduty             = var.enable_guardduty
   finding_publishing_frequency = var.finding_publishing_frequency

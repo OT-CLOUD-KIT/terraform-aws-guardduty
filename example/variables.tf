@@ -187,3 +187,15 @@ variable "env" {
     error_message = "env must be one of 'd', 'p', 'q', 's'"
   }
 }
+
+variable "tenant" {
+  description = "Name of the tenant"
+  type        = string
+  default     = ""
+}
+
+variable "resource" {
+  description = "Name of the resource"
+  type        = string
+  default     = ""
+}

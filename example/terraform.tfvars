@@ -6,6 +6,8 @@ app                          = "GD"
 team                         = "test@mail.com"
 region                       = "ap-south-1"
 env                          = "q"
+tenant                       = ""
+resource                     = "GD"
 
 guardduty_detector_feature_variables = [
   {

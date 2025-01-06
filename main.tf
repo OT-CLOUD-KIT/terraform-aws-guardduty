@@ -1,15 +1,10 @@
 module "naming" {
-  source                  = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-naming.git?ref=dev"
-  random_alphanumeric_len = 4
-  bu                      = "gd"
-  app                     = "gd"
-  env                     = "q"
-  resource                = "gd"
-  tenant                  = ""
-  special                 = false
-  upper                   = false
-  number                  = true
-  gen_no_of_names         = 1
+  source   = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-naming.git?ref=dev"
+  bu       = var.bu
+  env      = var.env
+  app      = var.app
+  tenant   = var.tenant
+  resource = var.resource
 }
 
 ##################################################
