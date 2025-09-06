@@ -1,13 +1,6 @@
 enable_guardduty             = true
 finding_publishing_frequency = "FIFTEEN_MINUTES"
-bu                           = "TF"
-program                      = "OT"
-app                          = "GD"
-team                         = "test@mail.com"
-region                       = "us-east-1"
-env                          = "q"
-tenant                       = ""
-resource                     = "GD"
+
 
 guardduty_detector_feature_variables = [
   {

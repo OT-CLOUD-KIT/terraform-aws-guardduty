@@ -1,23 +1,11 @@
-module "standard_tags" {
-  source  = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-standard-tagging.git?ref=dev"
-  bu      = var.bu
-  program = "OT"
-  app     = var.app
-  team    = "infra"
-  region  = "us-east-1"
-  env     = var.env
-}
-
 module "guardduty" {
   source = "../"
 
-  env = var.env
-  app = var.app
-  bu  = var.bu
+  
 
   enable_guardduty             = var.enable_guardduty
   finding_publishing_frequency = var.finding_publishing_frequency
-  tags                         = module.standard_tags.standard_tags
+  tags                         = var.tags
 
   guardduty_detector_feature_variables = var.guardduty_detector_feature_variables
 
@@ -30,11 +18,9 @@ module "guardduty" {
 
   enable_guardduty_threatintelset    = var.enable_guardduty_threatintelset
   guardduty_threatintelset_variables = var.guardduty_threatintelset_variables
+
   depends_on = [module.s3_bucket]
 }
-
-
-
 
 module "s3_bucket" {
   source = "git@github.com:OT-CLOUD-KIT/terraform-aws-s3.git?ref=Feature"
@@ -65,13 +51,11 @@ module "s3_bucket" {
   versioning                           = var.versioning
   lifecycle_rules                      = var.lifecycle_rules
   metric_configuration                 = var.metric_configuration
-  elb_service_accounts        = var.elb_service_accounts
-  elb_identifier              = var.elb_identifier
-  lb_identifier               = var.lb_identifier
-  log_delivery_folder         = var.log_delivery_folder
-  lb_log_delivery_conditions  = var.lb_log_delivery_conditions
-  crr_enabled                 = var.crr_enabled
-  replication_destination_arn = var.replication_destination_arn
-
+  elb_service_accounts                 = var.elb_service_accounts
+  elb_identifier                       = var.elb_identifier
+  lb_identifier                        = var.lb_identifier
+  log_delivery_folder                  = var.log_delivery_folder
+  lb_log_delivery_conditions           = var.lb_log_delivery_conditions
+  crr_enabled                          = var.crr_enabled
+  replication_destination_arn          = var.replication_destination_arn
 }
-

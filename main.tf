@@ -1,12 +1,3 @@
-module "naming" {
-  source   = "git::https://github.com/OT-CLOUD-KIT/terraform-aws-naming.git?ref=dev"
-  bu       = var.bu
-  env      = var.env
-  app      = var.app
-  tenant   = var.tenant
-  resource = var.resource
-}
-
 ##################################################
 # GuardDuty Detector
 ##################################################
@@ -40,14 +31,12 @@ resource "aws_guardduty_detector_feature" "guardduty_detector_feature" {
 ##################################################
 # GuardDuty Filter
 ##################################################
-
-
 resource "aws_guardduty_filter" "guardduty_filter" {
   for_each = var.enable_guardduty_filter && var.guardduty_filter_variables != null ? { for filter in var.guardduty_filter_variables : filter.name => filter } : {}
 
   detector_id = aws_guardduty_detector.guardduty_detector.id
 
-  name        = "${module.naming.naming_tag[0]}_${each.value.name}"
+  name        = each.value.name
   action      = each.value.action
   rank        = each.value.rank
   description = each.value.description
@@ -79,7 +68,7 @@ resource "aws_guardduty_ipset" "guardduty_ipset" {
   detector_id = aws_guardduty_detector.guardduty_detector.id
 
   activate = each.value.activate
-  name     = "${module.naming.naming_tag[0]}_${each.value.name}"
+  name     = each.value.name
   format   = each.value.format
   location = "https://s3.amazonaws.com/${aws_s3_object.ipset_object[each.key].bucket}/${each.value.key}"
 
@@ -90,7 +79,6 @@ resource "aws_s3_object" "ipset_object" {
   for_each = var.enable_guardduty_ipset && var.guardduty_ipset_variables != null ? { for ipset in var.guardduty_ipset_variables : ipset.name => ipset } : {}
 
   bucket = var.guardduty_s3_bucket
-
   content = each.value.content
   key     = each.value.key
 
@@ -106,7 +94,7 @@ resource "aws_guardduty_threatintelset" "guardduty_threatintelset" {
   detector_id = aws_guardduty_detector.guardduty_detector.id
 
   activate = each.value.activate
-  name     = "${module.naming.naming_tag[0]}_${each.value.name}"
+  name     = each.value.name
   format   = each.value.format
   location = "https://s3.amazonaws.com/${aws_s3_object.threatintelset_object[each.key].bucket}/${each.value.key}"
 
@@ -117,9 +105,8 @@ resource "aws_s3_object" "threatintelset_object" {
   for_each = var.enable_guardduty_threatintelset && var.guardduty_threatintelset_variables != null ? { for threatintelset in var.guardduty_threatintelset_variables : threatintelset.name => threatintelset } : {}
 
   bucket = var.guardduty_s3_bucket
-
   content = each.value.content
   key     = each.value.key
 
   tags = var.tags
-}
+} 
